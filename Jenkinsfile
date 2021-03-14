@@ -2,17 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage('Fetch dependencies') {
-        /* This stage pulls the latest image from
-           Dockerhub */
-            steps {
-                sh 'sudo docker pull karthequian/helloworld:latest'
-          }
-        }
         stage('Build docker image') {
         /* This stage builds the actual image; synonymous to
            docker build on the command line */
             steps {
+            sh 'mvn clean package'
             sh "sudo docker build . -t demoapp:1"
             }
         }
