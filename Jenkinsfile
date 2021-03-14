@@ -1,28 +1,13 @@
 pipeline {
-    agent {
-            docker {
-                image 'maven:3-alpine'
-                args '-v /root/.m2:/root/.m2'
-            }
-        }
+    agent any
 
     stages {
+        stage ('Maven build') {
+            withMaven {
+                sh "mvn clean package"
+            }
+        }
 
-        stage('Maven Build') {
-            steps {
-                sh 'mvn -B -DskipTests clean package'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
         stage('Build docker image') {
         /* This stage builds the actual image; synonymous to
            docker build on the command line */
