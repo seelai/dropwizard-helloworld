@@ -1,4 +1,4 @@
-#Introduction
+# Introduction
 This is a simple hello world Dropwizard application extended with a fibonacci sequence calculation.
 
 # Running the application
