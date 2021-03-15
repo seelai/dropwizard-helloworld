@@ -1,11 +1,22 @@
 pipeline {
     agent any
+    tools {
+                // Install the Maven version configured as "M3" and add it to the path.
+                maven "M3"
+                jdk "JDK8"
+        }
 
     stages {
-        stage ('Maven build') {
+        stage('Maven Build') {
             steps {
-                withMaven {
-                    sh "mvn clean package"
+                git 'https://github.com/seelai/dropwizard-helloworld'
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+
+            post {
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
                 }
             }
         }
