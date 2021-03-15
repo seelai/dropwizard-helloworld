@@ -1,16 +1,16 @@
 pipeline {
     agent any
     tools {
-                // Install the Maven version configured as "M3" and add it to the path.
-                maven "M3"
-                jdk "JDK8"
+            // Install the Maven version configured as "M3" and add it to the path.
+            maven "M3"
+            jdk "JDK8"
         }
 
     stages {
-        stage('Maven Build') {
+        stage('Build jar files') {
             steps {
                 git 'https://github.com/seelai/dropwizard-helloworld'
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+                sh "mvn clean package"
             }
 
             post {
@@ -22,28 +22,23 @@ pipeline {
         }
 
         stage('Build docker image') {
-        /* This stage builds the actual image; synonymous to
-           docker build on the command line */
             steps {
-            sh "sudo docker build . -t demoapp:1"
+                sh "sudo docker build . -t demoapp:1"
             }
         }
 
         stage('Push image to OCIR') {
-         /* Final stage of build; Push the
-            docker image to our OCI private Registry*/
-        steps {
-            sh "sudo docker login -u 'seelaiwong/oracleidentitycloudservice/seelai.wong@outlook.com' -p '+_yl(H#6+iUO)6r_rqk>' hyd.ocir.io"
-            sh "sudo docker tag demoapp:1 hyd.ocir.io/seelaiwong/demoapp:demo"
-            sh 'sudo docker push hyd.ocir.io/seelaiwong/demoapp:demo'
+            steps {
+                sh "sudo docker login -u 'axu6suxpi2nw/oracleidentitycloudservice/seelai.wong@outlook.com' -p '+_yl(H#6+iUO)6r_rqk>' hyd.ocir.io"
+                sh "sudo docker tag demoapp:1 hyd.ocir.io/axu6suxpi2nw/demoapp:demo"
+                sh 'sudo docker push hyd.ocir.io/axu6suxpi2nw/demoapp:demo'
 
-           }
+               }
          }
          stage('Deploy to OKE') {
          /* Deploy the image to OKE*/
 
         steps {
-            /*sh "'sudo cp /var/lib/jenkins/workspace/deploy.sh /var/lib/jenkins/workspace/jenkins-oci_master'"*/
             sh 'sh ../../demo-deploy.sh'
            }
          }
